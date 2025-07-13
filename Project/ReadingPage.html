@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HentaiBlaze - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: #2d3748;
+            border-bottom: 1px solid #4a5568;
+            padding: 0.5rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header .navbar {
+            padding: 0.5rem 1rem;
+        }
+
+        .header__brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header__menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .header__logo {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .header__subtitle {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .header__actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header__search-btn,
+        .header__message-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header__notification-badges {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e53e3e;
+            color: #ffffff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header__avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+ .search-modal {
+            background: rgba(20, 30, 40, 0.98);
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden !important;
+        }
+    
+        .search-modal.search-modal--active {
+            display: flex;
+        }
+    
+        .search-modal__content {
+            background: #232c34;
+            border-radius: 4px;
+            padding: 2rem 2.5rem 1.5rem 2.5rem;
+            min-width: 320px;
+            max-width: 1100px;
+            width: 98vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: relative;
+            max-height: 98vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+    
+        .search-modal__close {
+            position: absolute;
+            top: 0;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            z-index: 2;
+        }
+    
+        .search-modal__filter-btn {
+            padding: 0.18rem 0.7rem !important;
+            font-size: 0.88rem !important;
+            min-height: 28px !important;
+            line-height: 1.1 !important;
+        }
+    
+        .search-modal__header {
+            margin-bottom: .75rem;
+        }
+    
+        .search-modal__search-bar {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 3px;
+            border: 1px solid #fff;
+            background: #232c34;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+        }
+    
+        .search-modal__filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: .75rem;
+        }
+    
+        .search-modal__filter-btn {
+            background: transparent;
+            color: #fff;
+            border: 1.2px solid #fff;
+            border-radius: 0;
+            padding: 0.32rem 1.1rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+            outline: none;
+            min-width: 70px;
+        }
+    
+        .search-modal__filter-btn--active,
+        .search-modal__filter-btn:focus {
+            background: #a11341;
+            color: #fff;
+            border-color: #a11341;
+            border-radius: 0;
+        }
+    
+        .search-modal__section {
+            background: #3a414a;
+            border-radius: 4px;
+            padding: 1.2rem 1.5rem 1.5rem 1.5rem;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+    
+        .search-modal__section-title {
+            color: #fff;
+            font-size: 1.05rem;
+            margin-bottom: 0.2rem;
+        }
+    
+        .search-modal__section-subtitle {
+            color: #bbb;
+            font-size: 0.93rem;
+            margin-bottom: 1rem;
+        }
+    
+        .search-modal__tags {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 0.3rem;
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+        }
+    
+        .search-modal__tag {
+            background: transparent;
+            color: #fff;
+            border: 1.2px solid #fff;
+            border-radius: 0;
+            padding: 0.18rem 0.1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            cursor: pointer;
+            min-width: 0;
+            min-height: 26px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        .search-modal__tag--active {
+            background: #a11341;
+            color: #fff;
+            border-color: #a11341;
+        }
+    
+        .search-modal__section>.search-modal__reset-btn,
+        .search-modal__section>.search-modal__reset {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: transparent;
+            color: #fff;
+            border: 1.2px solid #fff;
+            border-radius: 0;
+            padding: 0.18rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+    
+        .search-modal__section>.search-modal__reset-btn:hover,
+        .search-modal__section>.search-modal__reset:hover {
+            background: #a11341;
+            color: #fff;
+            border-color: #a11341;
+        }
+    
+        .search-modal__broad-matches {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #3a414a;
+            border-radius: 4px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+    
+        .search-modal__broad-matches-text {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.98rem;
+        }
+    
+        .search-modal__broad-matches-subtitle {
+            color: #bbb;
+            font-size: 0.92rem;
+        }
+    
+        .search-modal__actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: .75rem;
+        }
+    
+        .search-modal__btn {
+            background: transparent;
+            color: #fff;
+            border: 1.2px solid #fff;
+            border-radius: 0;
+            padding: 0.32rem 1.1rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            outline: none;
+            min-width: 70px;
+        }
+    
+        .search-modal__btn--primary,
+        .search-modal__btn:hover,
+        .search-modal__btn:focus {
+            background: #b02a47;
+            color: #fff;
+            border-color: #b02a47;
+        }
+        @media (max-width: 575.98px) {
+            .search-modal__content {
+                max-width: 95vw !important;
+                width: 95vw !important;
+                min-width: 0 !important;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                border-radius: 10px !important;
+                padding: 1rem 0.5rem !important;
+                box-shadow: none !important;
+                position: fixed !important;
+                top: 50%;
+                left: 46%;
+                transform: translate(-50%, -50%);
+            }
+    
+            .search-modal {
+                align-items: center !important;
+                justify-content: center !important;
+            }
+    
+            .search-modal__section,
+            .search-modal__broad-matches {
+                padding: 1rem 0.5rem;
+            }
+    
+            .search-modal__tags {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.3rem;
+            }
+    
+            .search-modal__tag {
+                font-size: 0.5rem;
+                padding: 0.15rem 0.1rem;
+                min-height: 28px;
+            }
+    
+            .search-modal__filter-btn,
+            .search-modal__btn {
+                font-size: 0.9rem;
+                padding: 0.32rem 0.7rem;
+                min-width: 60px;
+            }
+    
+            .search-modal__header {
+                display: none !important;
+            }
+    
+            .search-modal__content {
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .search-modal__broad-matches {
+                order: 1;
+            }
+    
+            .search-modal__section {
+                order: 2;
+            }
+    
+            .search-modal__tags {
+                order: 3;
+            }
+    
+            .search-modal__filters {
+                order: 4;
+            }
+    
+            .search-modal__actions {
+                order: 5;
+            }
+    
+            .search-modal__filters {
+                display: none;
+            }
+    
+            .search-modal__actions {
+                display: none;
+            }
+    
+            .search-modal__close {
+                display: none;
+            }
+        }
+      @media (max-width: 575.98px) {
+           .sidebars-mobile__current-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .sidebars-mobile__current-link::after {
+            content: '\f078';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: #a0aec0;
+            transition: transform 0.3s ease, color 0.2s;
+        }
+        
+        .sidebars-mobile__current-link.collapsed::after {
+            content: '\f054';
+            transform: rotate(0deg);
+        }
+        
+        .sidebars-mobile__current-link:hover::after {
+            color: #fff;
+        }
+        .trending__filters-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .trending__filter-mobile {
+            width: 100%;
+            background: #a11341;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            padding-right: 2.2rem;
+        }
+
+        .trending__filter-mobile:not(.trending__filter-mobile--active) {
+            background: #16202a;
+            color: #e2e8f0;
+            border: 1.5px solid #374151;
+        }
+
+        .trending__filter-mobile:not(.trending__filter-mobile--active):hover {
+            background: #223046;
+            color: #fff;
+            border-color: #a11341;
+        }
+
+        .trending__filter-mobile::after {
+            content: '\f054';
+            /* FontAwesome: chevron-right */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 1rem;
+            color: #a0aec0;
+            position: absolute;
+            right: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: color 0.2s;
+            pointer-events: none;
+            display: inline-block;
+        }
+
+        .trending__filter-mobile--active::after {
+            content: '\f078';
+            /* FontAwesome: chevron-down */
+            color: #fff;
+        }
+
+        .trending__filter-mobile:focus::after,
+        .trending__filter-mobile:hover::after {
+            color: #fff;
+        }
+        .sidebars-mobile__dropdown {
+            background: #1e293b;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebars-mobile__dropdown.show {
+            max-height: 600px;
+            opacity: 1;
+        }
+        
+        .sidebars-mobile__dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            color: #e2e8f0;
+            text-decoration: none;
+            border-bottom: 1px solid #374151;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .sidebars-mobile__dropdown-item:hover {
+            background: #334155;
+            color: #fff;
+        }
+        
+        .sidebars-mobile__dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .sidebars-mobile__dropdown-item i {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        /* Overview specific sub-items */
+        .overview-subitems {
+            background: #0f172a;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .overview-subitems .sidebars-mobile__dropdown-item {
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        
+    }
+    </style>
+
+    <!-- Modal collection -->
+     <style>
+        #collectionModal .modal-content {
+            background-color: #0a1822;
+            border-radius: 0;
+        }
+
+        #collectionModal .modal-content .btn-close {
+            display: none;
+        }
+
+        #collectionModal .modal-content input:first-of-type {
+            background-color: #0a1822;
+            border-top: none;
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+     </style>
+
+     <!-- Mobile sidebar -->
+    <style>
+        @media (max-width: 576px) {
+            .sidebars-mobile {
+                display: block !important;
+                position: sticky;
+                top: 56px;
+                z-index: 1001;
+                background: #111827;
+                width: 100%;
+            }
+    
+            .sidebars {
+                display: none !important;
+            }
+    
+            .main-contents {
+                padding-top: 56px;
+            }
+        }
+    
+        @media (min-width: 577px) {
+            .sidebars-mobile {
+                display: none !important;
+            }
+    
+            .sidebars {
+                display: block !important;
+            }
+        }
+    </style>
+
+</head>
+<body>
+ 
+
+<!-- Sidebar Overlay -->
+    <div class="sidebar__overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar__header">
+            <i class="fas fa-bars sidebar__menu-icon" id="sidebarClose"></i>
+            <span class="sidebar__logo">HENTAIBLAZE</span>
+        </div>
+        
+        <div class="sidebar__content">
+            <!-- Main Navigation -->
+            <nav class="sidebar__section">
+                <ul class="sidebar__nav">
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link sidebar__nav-link--active">
+                            <i class="fas fa-home sidebar__nav-icon"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-fire sidebar__nav-icon"></i>
+                            <span>Trending</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-list sidebar__nav-icon"></i>
+                            <span>List</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <button class="sidebar__nav-link" onclick="openSearchModal(); closeSidebar();">
+                            <i class="fas fa-search sidebar__nav-icon"></i>
+                            <span>Search</span>
+                        </button>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-compass sidebar__nav-icon"></i>
+                            <span>Browse</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-plus sidebar__nav-icon"></i>
+                            <span>Contribute</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Resources Section -->
+            <div class="sidebar__section">
+                <h3 class="sidebar__section-title">Resources</h3>
+                <ul class="sidebar__nav">
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-history sidebar__nav-icon"></i>
+                            <span>History</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-clock sidebar__nav-icon"></i>
+                            <span>Watch Later</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-heart sidebar__nav-icon"></i>
+                            <span>Liked Videos</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-play sidebar__nav-icon"></i>
+                            <span>Playlist</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Account Section -->
+            <div class="sidebar__section">
+                <h3 class="sidebar__section-title">Account</h3>
+                <ul class="sidebar__nav">
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-user sidebar__nav-icon"></i>
+                            <span>My Channel</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-cog sidebar__nav-icon"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-download sidebar__nav-icon"></i>
+                            <span>Download Apps</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-exchange-alt sidebar__nav-icon"></i>
+                            <span>Switch Account</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-sign-in-alt sidebar__nav-icon"></i>
+                            <span>Sign In</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Connect Section -->
+            <div class="sidebar__section">
+                <h3 class="sidebar__section-title">Connect</h3>
+                <ul class="sidebar__nav">
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-envelope sidebar__nav-icon"></i>
+                            <span>Contact Us</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-newspaper sidebar__nav-icon"></i>
+                            <span>What's New</span>
+                        </a>
+                    </li>
+                    <li class="sidebar__nav-item">
+                        <a href="#" class="sidebar__nav-link">
+                            <i class="fas fa-city sidebar__nav-icon"></i>
+                            <span>HentaiBlaze Town</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+  <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal__content">
+            <div class="search-modal__header">
+                <input type="text" class="search-modal__search-bar" placeholder="HENTAI" id="searchInput">
+            </div>
+            
+            <div class="search-modal__filters">
+                <div class="serch-model__left">
+                    <button class="search-modal__filter-btn search-modal__filter-btn--active">Tags</button>
+                    <button class="search-modal__filter-btn">Gender</button>
+                    <button class="search-modal__filter-btn">Gender</button>
+                    <button class="search-modal__filter-btn">Blacklist</button>
+                </div>
+                <div class="search-model__right">
+                    <button class="search-modal__filter-btn" onclick="resetAllFilters()">Reset all</button>
+                    <button class="search-modal__filter-btn">Sort</button>
+                </div>
+
+            </div>
+            
+            <div class="search-modal__section">
+                <h3 class="search-modal__section-title">Include Tags</h3>
+                <p class="search-modal__section-subtitle">Find things that have all of these tags</p>
+                <button class="search-modal__reset-btn" onclick="resetTags()" type="button">RESET</button>
+                <div class="search-modal__tags" id="tagsList">
+                    <button class="search-modal__tag" onclick="toggleTag(this)">COSPLAY</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">ANIME</button>
+                    <button class="search-modal__tag search-modal__tag--active" onclick="toggleTag(this)">MANGA</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">GAMES</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">VR</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">3D</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">AMATEUR</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">PROFESSIONAL</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">LOLI</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">MILF</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">YURI</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">YAOI</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">TENTACLES</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">BUKKAKE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">GURO</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">ROMANCE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">COMEDY</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">DRAMA</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">INCEST</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">FANTASY</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">SCHOOL</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">OFFICE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">OUTDOOR</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">SWIMSUIT</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">UNIFORM</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">MAID</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">NURSE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">TEACHER</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">STUDENT</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">MONSTER</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">DEMON</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">ANGEL</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">ELF</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">CATGIRL</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">FUTANARI</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">TRAP</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">FEMDOM</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">MALEDOM</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">BONDAGE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">BDSM</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">VANILLA</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">HARDCORE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">SOFTCORE</button>
+                    <button class="search-modal__tag" onclick="toggleTag(this)">ECCHI</button>
+                </div>
+            </div>
+            
+            <div class="search-modal__broad-matches">
+                <div>
+                    <div class="search-modal__broad-matches-text">Broad Matches</div>
+                    <div class="search-modal__broad-matches-subtitle">Show results that also contain related tags if they contain most of the selected tags</div>
+                </div>
+                <div class="search-modal__toggle" id="broadMatchesToggle" onclick="toggleBroadMatches()">
+                    <div class="search-modal__toggle-slider"></div>
+                </div>
+            </div>
+            
+            <div class="search-modal__actions">
+                <button class="search-modal__btn" onclick="resetAllFilters()">Reset All</button>
+                <button class="search-modal__btn" onclick="closeSearchModal()">Cancel</button>
+                <button class="search-modal__btn search-modal__btn--primary" onclick="applySearch()">Apply</button>
+            </div>
+        </div>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-3">
+            <!-- Hamburger Menu -->
+            <div class="d-flex align-items-center">
+                <i class="fas fa-bars navbar__icon me-3" id="hamburgerMenu"></i>
+                <a class="navbar__brand" href="#">HENTAIBLAZE</a>
+               
+            </div>
+            
+            <!-- Right side items -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Search Icon -->
+                <i class="fas fa-search navbar__icon" id="searchIcon"></i>
+            
+                <!-- Toggle button for mobile -->
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="fas fa-ellipsis-v text-light"></i>
+                </button>
+            
+                <i class="fas fa-envelope"></i>
+            
+                <!-- Navigation items -->
+                <div class="header__right d-flex align-items-center gap-3 mb-0">
+                    <div class="header__icon position-relative">
+                        <i class="fa fa-commenting"></i>
+                        <span class="header__notification-badge">1</span>
+                    </div>
+                    <div class="header__avatar"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+ <!-- Abandon 100 Section-->
+    <section class="section section--bordered d-none d-sm-block">
+        <div class="manga-reader__page-counter d-flex justify-content-center align-items-center mb-2">
+            <span class="me-1 manga-reader__page-label">Page</span>
+            <input type="text" class="form-control form-control-sm text-center manga-reader__page-input" value="01">
+            <span class="ms-1 manga-reader__page-total">of 194</span>
+        </div>
+    
+        <div class="container text-center py-4 manga-reader">
+            <h1 class="manga-reader__title mb-4">Abandon: 100 Nuki Shinai to Derarenai Kushigi na Kyoushitsu 1</h1>
+    
+            <div class="manga-reader__view-mode mb-3">
+                <span class="me-2 text-white">View mode:</span>
+                <button class="btn btn-outline-light btn-sm manga-reader__btn">Single Page</button>
+                <button class="btn btn-outline-light btn-sm manga-reader__btn">Western Page</button>
+                <button class="btn btn-sm manga-reader__btn active">Manga Page</button>
+            </div>
+    
+            <div class="manga-reader__pages d-flex justify-content-center flex-wrap">
+                <img src="assets/img/anh-nen-may-tinh-4k-1.jpg" alt="Manga Page" class="img-fluid manga-reader__image">
+            </div>
+    
+            <div class="manga-reader__nav mt-4 d-flex justify-content-between gap-3">
+                <div>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i> Browse
+                    </button>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i> Gallery
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i> Previous
+                    </button>
+                    <button class="btn btn-outline-light btn-sm">
+                        Next <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+    
+            </div>
+    </section>
+
+    <!-- Mobile -->
+    <section class="section section--bordered d-block d-sm-none">
+        <div class="container text-center py-3 manga-reader">
+            <h1 class="manga-reader__title mb-1" style="font-size:1.1rem;">Abandon: 100 Nuki Shinai to Derarenai Kushigi na
+                Kyoushitsu 1</h1>
+            <div class="text-danger small mb-2">(English)</div>
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <button class="btn btn-outline-light btn-sm px-3">Browse</button>
+                <button class="btn btn-outline-light btn-sm px-3">Gallery</button>
+            </div>
+            <div class="manga-reader__pages mb-3">
+                <img src="assets/img/anh-nen-may-tinh-4k-1.jpg" alt="Manga Page" class="img-fluid manga-reader__image"
+                    style="width:100%;max-width:100vw;">
+            </div>
+            <div class="manga-reader__page-counter d-flex justify-content-center align-items-center mb-2">
+                <span class="me-1 manga-reader__page-label">Page</span>
+                <input type="text" class="form-control form-control-sm text-center manga-reader__page-input" value="01"
+                    style="width:50px;">
+                <span class="ms-1 manga-reader__page-total">of 194</span>
+            </div>
+            <div class="d-flex justify-content-center gap-2 mb-2">
+                <button class="btn btn-outline-light btn-sm px-3">&lt; Previous</button>
+                <button class="btn btn-outline-light btn-sm px-3">Next &gt;</button>
+            </div>
+            <div class="text-white mb-1">View mode:</div>
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <button class="btn btn-danger btn-sm manga-reader__btn">Single Page</button>
+                <button class="btn btn-outline-light btn-sm manga-reader__btn">Western Page</button>
+                <button class="btn btn-outline-light btn-sm manga-reader__btn">Manga Page</button>
+            </div>
+            <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-outline-light btn-sm px-3">Browse</button>
+                <button class="btn btn-outline-light btn-sm px-3">Gallery</button>
+            </div>
+        </div>
+    </section>
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+ 
+    <!-- Reposive Sidebar -->
+    <script>
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const hamburgerMenu = document.getElementById("hamburgerMenu");
+        const sidebarClose = document.getElementById("sidebarClose");
+
+        function openSidebar() {
+        sidebar.classList.add("sidebar--open");
+        sidebarOverlay.classList.add("sidebar__overlay--visible");
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove("sidebar--open");
+            sidebarOverlay.classList.remove("sidebar__overlay--visible");
+        }
+
+        hamburgerMenu.addEventListener("click", openSidebar);
+        sidebarClose.addEventListener("click", closeSidebar);
+        sidebarOverlay.addEventListener("click", closeSidebar);
+    </script>
+
+    
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

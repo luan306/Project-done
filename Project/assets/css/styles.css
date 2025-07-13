@@ -3454,6 +3454,7 @@ body {
 
 .carousel-inner {
   overflow: hidden;
+  color: #000;
 }
 
 .carousel-item {
@@ -4757,6 +4758,11 @@ body {
             background: transparent;
             color: #fff;
             box-shadow: none;
+        }
+.btn.active{
+            background-color: #b02846;
+            border: none;
+            
         }
 .btn-danger{
     background-color: #b02846;
